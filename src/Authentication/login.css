@@ -1,0 +1,33 @@
+.parent{
+    @apply p-4 justify-center bg-white min-h-screen
+}
+
+.login_wrapper {
+    @apply w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[30%] bg-white rounded-xl border-2 p-6;
+}
+
+.title_wrapper {
+    @apply h-[10%] flex flex-col justify-center items-center text-center mt-20;
+}
+
+.image {
+    @apply w-[10%]  justify-center items-center mb-5
+}
+
+.title {
+    @apply font-medium text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4;
+}
+
+
+.textfield_wrapper{
+
+    @apply p-10 mt-9  h-80 
+}
+
+.login_btn {
+    @apply w-full h-12 mt-10 flex justify-center items-center bg-[#1F5EFF] rounded-md; 
+}
+.catcherror{
+
+    @apply border-red-700 border rounded-lg p-2 w-full flex flex-row justify-around items-center mt-7
+}

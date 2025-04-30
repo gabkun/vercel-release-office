@@ -1,0 +1,30 @@
+.nav_parent{
+
+    @apply min-h-screen bg-white w-[100%] p-5
+}
+
+.navigation_header{
+
+    @apply flex flex-row justify-between h-[100px]  items-center mb-4
+}
+
+.profile_pic {
+    @apply  flex items-center justify-center;
+}
+
+.pp_wrapper {
+    @apply flex items-center justify-center bg-emerald-200 w-[50px] h-[50px] rounded-full;
+}
+
+.nav_logo{
+
+    @apply w-[30%]
+}
+.navlist{
+    @apply flex flex-row justify-center items-center px-2
+}
+
+.icon{
+
+    @apply mr-3 pl-5
+}

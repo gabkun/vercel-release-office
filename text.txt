@@ -1,0 +1,169 @@
+import React, { useState, useEffect } from "react";
+import Sidenavbar from "../../Admin Utilities/sidenavbar";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid
+} from "recharts";
+import axiosInstance from "../../api/axiosConfig";
+
+const Analytics = () => {
+  const [eggData, setEggData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const eggInputTotal = 1500;
+const totalPupae = 3200;
+const totalLarvae = 4500;
+const outstandingEmployee = "John Doe";
+  
+  // Static data for pupae and larvae standings
+  const pupaeStandingData = [
+    { name: "Mon", John: 200, Alice: 180, Mark: 150 },
+    { name: "Tue", John: 220, Alice: 190, Mark: 170 },
+    { name: "Wed", John: 210, Alice: 200, Mark: 160 },
+    { name: "Thu", John: 230, Alice: 210, Mark: 180 },
+    { name: "Fri", John: 250, Alice: 220, Mark: 200 },
+  ];
+
+  const larvaeStandingData = [
+    { name: "Mon", John: 300, Alice: 280, Mark: 250 },
+    { name: "Tue", John: 310, Alice: 290, Mark: 270 },
+    { name: "Wed", John: 320, Alice: 310, Mark: 260 },
+    { name: "Thu", John: 330, Alice: 320, Mark: 280 },
+    { name: "Fri", John: 350, Alice: 330, Mark: 300 },
+  ];
+
+  useEffect(() => {
+    // Fetching the eggs per day data from the API
+    const fetchEggData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/eggs/eggsperday');
+        const fetchedData = response.data;
+        
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const employees = {};
+
+        // Transforming the fetched data to the format needed for the chart
+        fetchedData.forEach(item => {
+          const { day, total_weight, firstname, surname } = item;
+          const employeeName = `${firstname} ${surname}`;
+
+          if (!employees[employeeName]) {
+            employees[employeeName] = {};
+          }
+
+          if (!employees[employeeName][day]) {
+            employees[employeeName][day] = 0;
+          }
+
+          employees[employeeName][day] += parseInt(total_weight);
+        });
+
+        // Constructing the chart data in the correct format
+        const formattedData = daysOfWeek.map(day => {
+          const entry = { name: day };
+          Object.keys(employees).forEach(employee => {
+            entry[employee] = employees[employee][day] || 0;
+          });
+          return entry;
+        });
+
+        setEggData(fetchedData);
+        setChartData(formattedData);
+      } catch (error) {
+        console.error("Error fetching egg data:", error);
+      }
+    };
+
+    fetchEggData();
+  }, []);
+
+  return (
+    <div className="flex h-screen w-full">
+      {/* Sidebar */}
+      <div className="w-64 min-w-[16rem] border-r border-gray-200 bg-white">
+        <Sidenavbar />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-6 overflow-auto">
+        <h1 className="text-2xl font-bold mb-6">Analytics Dashboard</h1>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Outstanding Employee</p>
+            <h2 className="text-xl font-semibold">{outstandingEmployee}</h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total BSF Eggs(Today)</p>
+            <h2 className="text-xl font-semibold">{eggInputTotal}</h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total BSF Pupae Input (Today)</p>
+            <h2 className="text-xl font-semibold">{totalPupae}</h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total BSF Larvae Input(Today)</p>
+            <h2 className="text-xl font-semibold">{totalLarvae}</h2>
+          </div>
+        </div>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Employee Standing - BSF Eggs Input (Grams)</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {/* Render bars dynamically based on employee names */}
+                {Object.keys(chartData[0] || {}).map((employeeName, index) => {
+                  if (employeeName !== 'name') {
+                    return (
+                      <Bar key={employeeName} dataKey={employeeName} fill={index % 2 === 0 ? "#8884d8" : "#82ca9d"} />
+                    );
+                  }
+                  return null;
+                })}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Static Data for Pupae and Larvae */}
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Pupae Standing</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={pupaeStandingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="John" fill="#8884d8" />
+                <Bar dataKey="Alice" fill="#82ca9d" />
+                <Bar dataKey="Mark" fill="#ff7300" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Larvae Standing</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={larvaeStandingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="John" fill="#8884d8" />
+                <Bar dataKey="Alice" fill="#82ca9d" />
+                <Bar dataKey="Mark" fill="#ff7300" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Analytics;
