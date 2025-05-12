@@ -7,8 +7,14 @@ import {
   Monitor,
   Smartphone,
   Box,
-  PieChart
+  PieChart,
+  Beef,
+  Package,
+  Notebook,
+  Wheat,        // for Pellets
+  Flower2       // for Fertilizer
 } from "lucide-react";
+
 import BioFlytLogo from "../assets/bioflyt logo full 1.svg";
 
 const Sidenavbar = () => {
@@ -22,7 +28,13 @@ const Sidenavbar = () => {
     { label: "Employee Monitoring", icon: <Monitor className="w-5 h-5" />, path: "/EmployeeMonitoring" },
     { label: "BioFlyt Mobile App", icon: <Smartphone className="w-5 h-5" />, path: "/MobileApp" },
     { label: "BioFlyt Products", icon: <Box className="w-5 h-5" />, path: "/prod" },
+    { label: "Food Waste", icon: <Beef className="w-5 h-5" />, path: "/foodwaste" },
+    { label: "Pellets Input", icon: <Wheat className="w-5 h-5" />, path: "/pellets" },
+    { label: "Fertilizer Input", icon: <Flower2 className="w-5 h-5" />, path: "/fertilizer" },
+    { label: "Exports", icon: <Package className="w-5 h-5" />, path: "/exportprods" },
+    { label: "Remarks", icon: <Notebook className="w-5 h-5" />, path: "/misc" },
   ];
+
 
   return (
     <div className="h-screen w-64 bg-white border-r shadow-lg fixed flex flex-col">

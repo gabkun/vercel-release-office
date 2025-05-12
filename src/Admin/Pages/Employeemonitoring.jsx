@@ -82,7 +82,7 @@ const formatDate = (timestamp) => {
           <table className="min-w-full text-sm text-left text-gray-700">
             <thead className="bg-gray-200 text-gray-600 uppercase text-xs">
               <tr>
-                <th className="px-6 py-3">Employee ID</th>
+                <th className="px-6 py-3">Name</th>
                 <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Time</th>
                 <th className="px-6 py-3">Date</th>
@@ -91,7 +91,7 @@ const formatDate = (timestamp) => {
             <tbody>
               {attendanceData.map((entry) => (
                 <tr key={entry.id} className="border-b">
-                  <td className="px-6 py-4">{entry.employee_id}</td>
+                  <td className="px-6 py-4">{entry.firstname} {entry.surname}</td>
                   <td className="px-6 py-4">{getStatusLabel(entry.attendance_status)}</td>
                   <td className="px-6 py-4">{formatTime(entry.timestamp)}</td>
                   <td className="px-6 py-4">{formatDate(entry.timestamp)}</td>

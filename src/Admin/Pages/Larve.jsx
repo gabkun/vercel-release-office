@@ -8,6 +8,7 @@ export const Larvae = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [Larvae, setLarvae] = useState([]);
   const [showModal, setShowModal] = useState(false);
+    const [employees, setEmployees] = useState([]);
 
     const navigate = useNavigate();
   useEffect(() => {
@@ -30,6 +31,12 @@ export const Larvae = () => {
         console.error("Error fetching larvae/pupae data:", err);
       });
   }, []);
+
+    useEffect(() => {
+  axiosInstance.get('/api/users/employees') // Adjust endpoint to your API route
+    .then(response => setEmployees(response.data))
+    .catch(error => console.error('Error fetching employees:', error));
+}, []);
 
 
   const sortedData = [...Larvae].sort((a, b) => {
@@ -121,7 +128,7 @@ const handleFormSubmit = async (data) => {
                   Type {sortConfig.key === "type" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
                 </th>
                 <th onClick={() => handleSort("grams")} className="px-6 py-3 cursor-pointer hover:underline">
-                  Count In Grams {sortConfig.key === "grams" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+                  Count In Kilos {sortConfig.key === "grams" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
                 </th>
                 <th onClick={() => handleSort("date")} className="px-6 py-3 cursor-pointer hover:underline">
                   Date Inputted {sortConfig.key === "date" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
@@ -146,7 +153,7 @@ const handleFormSubmit = async (data) => {
                 >
                   <td className="px-6 py-4">{entry.employeeId}</td>
                   <td className="px-6 py-4">{entry.type}</td>
-                  <td className="px-6 py-4">{entry.grams}g</td>
+                  <td className="px-6 py-4">{entry.grams}kg</td>
                   <td className="px-6 py-4">{entry.date}</td>
                   <td className="px-6 py-4 font-medium">{entry.status}</td>
                   <td className="px-6 py-4 space-x-2">
@@ -181,6 +188,7 @@ const handleFormSubmit = async (data) => {
   isOpen={showModal}
   onClose={() => setShowModal(false)}
   onSubmit={handleFormSubmit}
+    employees={employees}
 />
 
     </div>

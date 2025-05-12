@@ -9,6 +9,12 @@ const Analytics = () => {
   const [eggData, setEggData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [pupaeStandingData, setPupaeStandingData] = useState([]);
+
+
+
+  const [pelletsStandingData, setPelletsStandingData] = useState([]);
+  const [foodwasteStandingData, setFoodwasteStandingData] = useState([]);
+  const [fertilizerStandingData, setFertilizerStandingData] = useState([]);
   const [larvaeStandingData, setLarvaeStandingData] = useState([]);
 
   const eggInputTotal = 1500;
@@ -16,7 +22,7 @@ const Analytics = () => {
   const totalLarvae = 4500;
   const outstandingEmployee = "John Doe";
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   const transformData = (data) => {
     const dayMap = {};
@@ -91,9 +97,41 @@ const Analytics = () => {
       }
     };
 
+      const fetchPelletsData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/pellets/getPerDay');
+        const formatted = transformData(response.data);
+        setPelletsStandingData(formatted);
+      } catch (error) {
+        console.error("Error fetching pellets data:", error);
+      }
+    };
+
+      const fetchFoodwasteData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/foodwaste/getPerDay');
+        const formatted = transformData(response.data);
+        setFoodwasteStandingData(formatted);
+      } catch (error) {
+        console.error("Error fetching pellets data:", error);
+      }
+    };
+      const fetchFertilizerData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/fertilizer/getPerDay');
+        const formatted = transformData(response.data);
+        setFertilizerStandingData(formatted);
+      } catch (error) {
+        console.error("Error fetching pellets data:", error);
+      }
+    };
+
     fetchEggData();
+    fetchFertilizerData();
+    fetchFoodwasteData();
     fetchPupaeData();
     fetchLarvaeData();
+    fetchPelletsData();
   }, []);
 
   const getEmployeeKeys = (data) => {
@@ -157,7 +195,7 @@ const Analytics = () => {
 
           {/* Static Data for Pupae and Larvae */}
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Pupae Standing</h2>
+            <h2 className="text-lg font-semibold mb-4">Pupae Standing - (kg)</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={pupaeStandingData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -173,7 +211,7 @@ const Analytics = () => {
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Larvae Standing</h2>
+            <h2 className="text-lg font-semibold mb-4">Larvae Standing - (kg)</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={larvaeStandingData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -182,6 +220,51 @@ const Analytics = () => {
                 <Tooltip />
                 <Legend />
                 {getEmployeeKeys(larvaeStandingData).map((key, index) => (
+                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+           <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Food Waste Standing - (kg)</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={foodwasteStandingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {getEmployeeKeys(foodwasteStandingData).map((key, index) => (
+                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+           <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Pellets Standing - (kg)</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={pelletsStandingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {getEmployeeKeys(pelletsStandingData).map((key, index) => (
+                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+           <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-lg font-semibold mb-4">Fertilizer Standing</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={fertilizerStandingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {getEmployeeKeys(fertilizerStandingData).map((key, index) => (
                   <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
                 ))}
               </BarChart>

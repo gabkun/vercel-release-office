@@ -14,6 +14,11 @@ import { Larvae } from "./Admin/Pages/Larve";
 import { MobileApp } from "./Admin/Pages/MobileApp";
 import { ProductInput } from "./Admin/Pages/ProductInput";
 import PrivateRoute from './Protected/Routes';
+import { FoodWaste } from "./Admin/Pages/FoodWaste";
+import { ExportProducts } from "./Admin/Pages/ExportProducts";
+import { Misc } from "./Admin/Pages/Misc";
+import { Pellets } from "./Admin/Pages/Pellets";
+import { Fertilizer } from "./Admin/Pages/Fertilizer";
 
 
 
@@ -31,6 +36,11 @@ function App() {
         <Route path="/EmployeeMonitoring" element={<PrivateRoute><EmployeeMonitoring /></PrivateRoute>} />
         <Route path="/Larvae" element={<PrivateRoute><Larvae /></PrivateRoute>} />
         <Route path="/MobileApp" element={<PrivateRoute><MobileApp /></PrivateRoute>} />
+        <Route path="/foodwaste" element={<PrivateRoute><FoodWaste /></PrivateRoute>} />
+        <Route path="/exportprods" element={<PrivateRoute><ExportProducts /></PrivateRoute>} />
+        <Route path="/misc" element={<PrivateRoute><Misc /></PrivateRoute>} />
+        <Route path="/pellets" element={<PrivateRoute><Pellets /></PrivateRoute>} />
+        <Route path="/fertilizer" element={<PrivateRoute><Fertilizer /></PrivateRoute>} />
         <Route path="/employeehours" element={<PrivateRoute><EmployeeHours /></PrivateRoute>} />
 
       </Routes>

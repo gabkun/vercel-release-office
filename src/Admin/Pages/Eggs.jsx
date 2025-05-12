@@ -9,6 +9,7 @@ export const Eggs = () => {
   const [eggData, setEggData] = useState([]);
   const navigate = useNavigate();
   const [showEggsModal, setShowEggsModal] = useState(false);
+  const [employees, setEmployees] = useState([]);
 
 const openEggsModal = () => setShowEggsModal(true);
 const closeEggsModal = () => setShowEggsModal(false);
@@ -31,6 +32,12 @@ const closeEggsModal = () => setShowEggsModal(false);
         console.error('Error fetching data: ', error);
       });
   }, []);
+
+  useEffect(() => {
+  AxiosInstance.get('/api/users/employees') // Adjust endpoint to your API route
+    .then(response => setEmployees(response.data))
+    .catch(error => console.error('Error fetching employees:', error));
+}, []);
 
   const sortedData = [...eggData].sort((a, b) => {
     if (!sortConfig.key) return 0;
@@ -177,6 +184,7 @@ const closeEggsModal = () => setShowEggsModal(false);
   isOpen={showEggsModal}
   onClose={closeEggsModal}
   onSubmitSuccess={refreshEggData}
+  employees={employees}
 />
     </div>
   );

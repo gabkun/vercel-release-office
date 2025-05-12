@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
-import { FaBug, FaLeaf, FaWeightHanging, FaCalendarAlt, FaUserTag } from 'react-icons/fa';
+import { FaEgg, FaUserTag, FaWeightHanging, FaCalendarAlt } from 'react-icons/fa';
+import { MdFastfood } from "react-icons/md";
+import { GiChicken } from "react-icons/gi";
+import axiosInstance from '../../api/axiosConfig';
 
-export const LarvaeModal = ({ isOpen, onClose, onSubmit, employees }) => {
+export const FertilizerModal = ({ isOpen, onClose, onSubmitSuccess, employees }) => {
   const [formData, setFormData] = useState({
     employee_id: '',
     weight: '',
     date: '',
-    input_type: '', // Start as empty
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'input_type' ? parseInt(value) : value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose();
+
+    try {
+      await axiosInstance.post('/api/fertilizer/create', {
+        ...formData,
+        weight: Number(formData.weight)
+      });
+      console.log(formData)
+      if (onSubmitSuccess) onSubmitSuccess();
+      onClose();
+    } catch (error) {
+      console.error('Failed to submit Foodwaste data:', error);
+    }
   };
 
   if (!isOpen) return null;
-
-  const isLarvae = formData.input_type === 1;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -36,15 +46,14 @@ export const LarvaeModal = ({ isOpen, onClose, onSubmit, employees }) => {
         >
           ×
         </button>
+
         <div className="flex items-center gap-3 mb-6">
-          {isLarvae ? <FaBug className="text-green-600 text-2xl" /> : <FaLeaf className="text-orange-500 text-2xl" />}
-          <h2 className="text-xl font-semibold text-gray-800">
-            {isLarvae ? 'Submit Larvae Data' : 'Submit Pupae Data'}
-          </h2>
+          <GiChicken className="text-yellow-600 text-2xl" />
+          <h2 className="text-xl font-semibold text-gray-800">Add Fertilizer Collection</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-<div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
+ <div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
         <FaUserTag className="text-gray-500" />
         <select
           name="employee_id"
@@ -67,7 +76,7 @@ export const LarvaeModal = ({ isOpen, onClose, onSubmit, employees }) => {
             <input
               type="number"
               name="weight"
-              placeholder="Weight in kilos"
+              placeholder="Weight in Kilos"
               value={formData.weight}
               onChange={handleChange}
               required
@@ -87,25 +96,11 @@ export const LarvaeModal = ({ isOpen, onClose, onSubmit, employees }) => {
             />
           </div>
 
-          <div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
-            <select
-              name="input_type"
-              value={formData.input_type}
-              onChange={handleChange}
-              required
-              className="w-full outline-none"
-            >
-              <option value="" disabled>Select Input Type</option>
-              <option value={1}>Larvae</option>
-              <option value={2}>Pupae</option>
-            </select>
-          </div>
-
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition duration-200"
           >
-            Submit {isLarvae ? 'Larvae' : 'Pupae'}
+            Submit Waste Data
           </button>
         </form>
       </div>

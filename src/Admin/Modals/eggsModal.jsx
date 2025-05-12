@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaEgg, FaUserTag, FaWeightHanging, FaCalendarAlt } from 'react-icons/fa';
 import axiosInstance from '../../api/axiosConfig';
 
-export const EggsModal = ({ isOpen, onClose, onSubmitSuccess }) => {
+export const EggsModal = ({ isOpen, onClose, onSubmitSuccess, employees }) => {
   const [formData, setFormData] = useState({
     employee_id: '',
     weight: '',
@@ -51,18 +51,23 @@ export const EggsModal = ({ isOpen, onClose, onSubmitSuccess }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
-            <FaUserTag className="text-gray-500" />
-            <input
-              type="text"
-              name="employee_id"
-              placeholder="Employee ID"
-              value={formData.employee_id}
-              onChange={handleChange}
-              required
-              className="w-full outline-none"
-            />
-          </div>
+ <div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
+        <FaUserTag className="text-gray-500" />
+        <select
+          name="employee_id"
+          value={formData.employee_id}
+          onChange={handleChange}
+          required
+          className="w-full outline-none bg-white"
+        >
+          <option value="">Select Employee</option>
+          {employees.map(emp => (
+            <option key={emp.employee_id} value={emp.employee_id}>
+              {emp.firstname} {emp.surname}
+            </option>
+          ))}
+        </select>
+      </div>
 
           <div className="flex items-center gap-2 border rounded-lg p-2 focus-within:ring-2 ring-blue-300">
             <FaWeightHanging className="text-gray-500" />
