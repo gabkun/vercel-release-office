@@ -9,6 +9,60 @@ const Analytics = () => {
   const [eggData, setEggData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [pupaeStandingData, setPupaeStandingData] = useState([]);
+  const [summaryData, setSummaryData] = useState({
+  foodWaste: "Loading...",
+  pupae: "Loading...",
+  larvae: "Loading...",
+  eggs: "Loading...",
+  fertilizer: "Loading...",
+  pellets: "Loading...",
+});
+const [bestEmployee, setBestEmployee] = useState("Loading...");
+
+useEffect(() => {
+  const fetchSummaryData = async () => {
+    try {
+      const [
+        foodWasteRes,
+        pupaeRes,
+        larvaeRes,
+        eggsRes,
+        fertilizerRes,
+        pelletsRes,
+        bestEmployeeRes
+      ] = await Promise.all([
+        axiosInstance.get('/api/foodwaste/today'),
+        axiosInstance.get('/api/larpup/pupae/total'),
+        axiosInstance.get('/api/larpup/larvae/total'),
+        axiosInstance.get('/api/eggs/totaltoday'),
+        axiosInstance.get('/api/fertilizer/today'),
+        axiosInstance.get('/api/pellets/today'),
+        axiosInstance.get('/api/users/best') // Best employee endpoint
+      ]);
+
+      setSummaryData({
+        foodWaste: foodWasteRes.data.total_weight ?? "No Data Today",
+        pupae: pupaeRes.data.total_weight ?? "No Data Today",
+        larvae: larvaeRes.data.total_weight ?? "No Data Today",
+        eggs: eggsRes.data.total_weight ?? "No Data Today",
+        fertilizer: fertilizerRes.data.total_weight ?? "No Data Today",
+        pellets: pelletsRes.data.total_weight ?? "No Data Today",
+      });
+
+      const best = bestEmployeeRes.data?.data;
+      if (best && best.firstname && best.surname) {
+        setBestEmployee(`${best.firstname} ${best.surname}`);
+      } else {
+        setBestEmployee("No approved inputs yet");
+      }
+    } catch (error) {
+      console.error("Error fetching summary data:", error);
+      setBestEmployee("Error loading");
+    }
+  };
+
+  fetchSummaryData();
+}, []);
 
 
 
@@ -154,19 +208,43 @@ const Analytics = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-xl shadow-md">
             <p className="text-gray-600">Outstanding Employee</p>
-            <h2 className="text-xl font-semibold">{outstandingEmployee}</h2>
+            <h2 className="text-xl font-semibold">{bestEmployee}</h2>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Eggs(Today)</p>
-            <h2 className="text-xl font-semibold">{eggInputTotal}</h2>
+            <p className="text-gray-600">Total BSF Eggs (Today)</p>
+            <h2 className="text-xl font-semibold">
+              {summaryData.eggs === "No Data Today" ? "No Data Today" : `${summaryData.eggs} g`}
+            </h2>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-md">
             <p className="text-gray-600">Total BSF Pupae Input (Today)</p>
-            <h2 className="text-xl font-semibold">{totalPupae}</h2>
+            <h2 className="text-xl font-semibold">
+              {summaryData.pupae === "No Data Today" ? "No Data Today" : `${summaryData.pupae} kg`}
+            </h2>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Larvae Input(Today)</p>
-            <h2 className="text-xl font-semibold">{totalLarvae}</h2>
+            <p className="text-gray-600">Total BSF Larvae Input (Today)</p>
+            <h2 className="text-xl font-semibold">
+              {summaryData.larvae === "No Data Today" ? "No Data Today" : `${summaryData.larvae} kg`}
+            </h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total Food Waste Inputs (Today)</p>
+            <h2 className="text-xl font-semibold">
+              {summaryData.foodWaste === "No Data Today" ? "No Data Today" : `${summaryData.foodWaste} kg`}
+            </h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total BSF Pellets Input (Today)</p>
+            <h2 className="text-xl font-semibold">
+              {summaryData.pellets === "No Data Today" ? "No Data Today" : `${summaryData.pellets} kg`}
+            </h2>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <p className="text-gray-600">Total Fertilizer Input (Today)</p>
+            <h2 className="text-xl font-semibold">
+              {summaryData.fertilizer === "No Data Today" ? "No Data Today" : `${summaryData.fertilizer} kg`}
+            </h2>
           </div>
         </div>
         {/* Charts Section */}
