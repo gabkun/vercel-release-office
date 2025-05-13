@@ -100,7 +100,7 @@ export const PelletsModal = ({ isOpen, onClose, onSubmitSuccess, employees }) =>
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition duration-200"
           >
-            Submit Waste Data
+            Submit Pellets Data
           </button>
         </form>
       </div>
