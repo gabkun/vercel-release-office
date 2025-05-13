@@ -1,6 +1,6 @@
-
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import SignUp from "./Authentication/authentication-signup";
 import Login from "./Authentication/authentication-login";
 import { OverallPage } from "./Admin/Overall";
@@ -20,9 +20,22 @@ import { Misc } from "./Admin/Pages/Misc";
 import { Pellets } from "./Admin/Pages/Pellets";
 import { Fertilizer } from "./Admin/Pages/Fertilizer";
 
-
-
 function App() {
+  useEffect(() => {
+    // Clear localStorage
+    localStorage.clear();
+
+    // Clear sessionStorage if needed
+    sessionStorage.clear();
+
+    // Clear cookies
+    document.cookie.split(";").forEach((cookie) => {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    });
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -41,22 +54,11 @@ function App() {
         <Route path="/misc" element={<PrivateRoute><Misc /></PrivateRoute>} />
         <Route path="/pellets" element={<PrivateRoute><Pellets /></PrivateRoute>} />
         <Route path="/fertilizer" element={<PrivateRoute><Fertilizer /></PrivateRoute>} />
-        <Route path="/employeehours" element={<PrivateRoute><EmployeeHours /></PrivateRoute>} />
-
+         <Route path="/employeehours" element={<EmployeeHours />} />
+       
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
-
-{/* <Route path="/overall" element={<OverallPage />} />
-<Route path="/prod" element={<ProductInput />} />
-<Route path="/Analytics" element={<Analytics />} />
-<Route path="/Eggs" element={<Eggs />} />
-<Route path="/EmployeeManagement" element={<EmployeeManagement />} />
-<Route path="/EmployeeMonitoring" element={<EmployeeMonitoring />} />
-<Route path="/Larvae" element={<Larvae />} />
-<Route path="/MobileApp" element={<MobileApp />} />
-<Route path="/employeehours" element={<EmployeeHours />} /> */}
