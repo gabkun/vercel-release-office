@@ -152,7 +152,7 @@ export const Fertilizer = () => {
                   className={`border-b ${entry.status === "Accepted" ? "bg-green-50" : entry.status === "Declined" ? "bg-red-50" : "bg-yellow-50"}`}
                 >
                   <td className="px-6 py-4">{entry.firstname}</td>
-                  <td className="px-6 py-4">{entry.grams}g</td>
+                  <td className="px-6 py-4">{entry.grams}kg</td>
                   <td className="px-6 py-4">{entry.date}</td>
                   <td className="px-6 py-4 font-medium">{entry.status}</td>
                   <td className="px-6 py-4 space-x-2">
