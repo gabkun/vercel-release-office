@@ -9,28 +9,37 @@ export const Larvae = () => {
   const [Larvae, setLarvae] = useState([]);
   const [showModal, setShowModal] = useState(false);
     const [employees, setEmployees] = useState([]);
+    
 
     const navigate = useNavigate();
-  useEffect(() => {
-    axiosInstance.get('/api/larpup/all')
-      .then(res => {
-        const formattedData = res.data.map(item => ({
-          id: item.id, // ← Add this line
-          employeeId: `${item.firstname}`,
-          type: item.input_type === 1 ? 'Larvae' : 'Pupae',
-          grams: item.weight,
-          date: new Date(item.date).toISOString().split('T')[0],
-          status:
-            item.status === 1 ? 'Pending' :
-            item.status === 3 ? 'Accepted' :
-            item.status === 2 ? 'Declined' : 'Unknown',
-        }));
-        setLarvae(formattedData);
-      })
-      .catch(err => {
-        console.error("Error fetching larvae/pupae data:", err);
-      });
-  }, []);
+useEffect(() => {
+  const formatLocalDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  axiosInstance.get('/api/larpup/all')
+    .then(res => {
+      const formattedData = res.data.map(item => ({
+        id: item.id,
+        employeeId: `${item.firstname}`,
+        type: item.input_type === 1 ? 'Larvae' : 'Pupae',
+        grams: item.weight,
+        date: formatLocalDate(item.date),
+        status:
+          item.status === 1 ? 'Pending' :
+          item.status === 3 ? 'Accepted' :
+          item.status === 2 ? 'Declined' : 'Unknown',
+      }));
+      setLarvae(formattedData);
+    })
+    .catch(err => {
+      console.error("Error fetching larvae/pupae data:", err);
+    });
+}, []);
 
     useEffect(() => {
   axiosInstance.get('/api/users/employees') // Adjust endpoint to your API route
