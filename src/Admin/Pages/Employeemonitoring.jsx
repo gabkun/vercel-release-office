@@ -62,6 +62,8 @@ const formatDate = (timestamp) => {
         return "Timed Out";
       case 3:
         return "Break Time";
+      case 4:
+        return "Lunch Time";
       default:
         return "Unknown";
     }
