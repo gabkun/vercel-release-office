@@ -14,7 +14,7 @@ export const MobileApp = () => {
   const [encodes, setEncodes] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-const [selectedEncodeId, setSelectedEncodeId] = useState(null);
+  const [selectedEncodeId, setSelectedEncodeId] = useState(null);
 
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const [selectedEncodeId, setSelectedEncodeId] = useState(null);
           >
             <div className="text-lg font-semibold mb-2 flex items-center gap-2">
               <FaBoxOpen className="text-yellow-600" />
-              Tracking ID: {encode.tracking_id}
+              Company: {encode.compname}
             </div>
 
             <div className="text-sm mb-1 flex items-center gap-2">
@@ -104,7 +104,7 @@ const [selectedEncodeId, setSelectedEncodeId] = useState(null);
             </div>
 
             <div className="text-sm mb-1">
-              Company: <span className="font-medium">{encode.compname}</span>
+              Tracking ID: <span className="font-medium">{encode.tracking_id}</span>
             </div>
 
             <button

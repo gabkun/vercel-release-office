@@ -3,15 +3,24 @@ import Sidenavbar from "../../Admin Utilities/sidenavbar";
 import axiosInstance from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { LarvaeModal } from "../Modals/larvaeModal";
+import { DateRangeModal } from "../Modals/DateFilter";
 
 export const Larvae = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [Larvae, setLarvae] = useState([]);
   const [showModal, setShowModal] = useState(false);
-    const [employees, setEmployees] = useState([]);
-    
+  const [employees, setEmployees] = useState([]);
+  const [showDateModal, setShowDateModal] = useState(false);
+  const navigate = useNavigate();
+    const [filteredData, setFilteredData] = useState([]);
+    const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
 
-    const navigate = useNavigate();
 useEffect(() => {
   const formatLocalDate = (dateString) => {
     const date = new Date(dateString);
@@ -35,6 +44,18 @@ useEffect(() => {
           item.status === 2 ? 'Declined' : 'Unknown',
       }));
       setLarvae(formattedData);
+
+              // Filter to today's entries by default
+        const today = new Date();
+        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+        const endOfToday = new Date(today.setHours(23, 59, 59, 999));
+
+        const todayEntries = formattedData.filter((entry) => {
+          const entryDate = new Date(entry.date);
+          return entryDate >= startOfToday && entryDate <= endOfToday;
+        });
+
+        setFilteredData(todayEntries);
     })
     .catch(err => {
       console.error("Error fetching larvae/pupae data:", err);
@@ -110,6 +131,39 @@ const handleFormSubmit = async (data) => {
     console.error("Submission failed:", error);
   }
 };
+
+  // Filter data by selected date range
+  useEffect(() => {
+    const { startDate, endDate } = dateRange[0];
+
+    const filtered = Larvae.filter((entry) => {
+      const entryDate = new Date(entry.date);
+      return entryDate >= startDate && entryDate <= endDate;
+    });
+
+    setFilteredData(filtered);
+  }, [dateRange]);
+
+    const sortedFilteredData = [...filteredData].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    let aValue = a[sortConfig.key];
+    let bValue = b[sortConfig.key];
+
+    if (sortConfig.key === "grams") {
+      aValue = Number(aValue);
+      bValue = Number(bValue);
+    }
+
+    return sortConfig.direction === "asc"
+      ? aValue < bValue
+        ? -1
+        : 1
+      : aValue > bValue
+      ? -1
+      : 1;
+  });
+
   return (
     <div className="flex h-screen w-full">
       {/* Sidebar */}
@@ -120,12 +174,26 @@ const handleFormSubmit = async (data) => {
       {/* Content */}
       <div className="flex-1 p-6 overflow-auto bg-gray-100">
         <h1 className="text-2xl font-bold mb-4">BSF Larvae / Pupae Collection</h1>
+                <button
+  onClick={() => setShowDateModal(true)}
+  className="mb-4 px-4 py-2 bg-yellow-600 text-white rounded-full shadow hover:bg-yellow-700 transition"
+>
+  Filter by Date
+</button>
         <button
         onClick={() => setShowModal(true)}
         className="mb-4 px-4 py-2 bg-indigo-600 text-white rounded-full shadow hover:bg-indigo-700 transition"
       >
         + Add Entry
       </button>
+              <div className="mb-4">
+      <DateRangeModal
+        isOpen={showDateModal}
+        onClose={() => setShowDateModal(false)}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+      />
+              </div>
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <table className="min-w-full table-auto text-sm text-left text-gray-700">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -149,7 +217,7 @@ const handleFormSubmit = async (data) => {
               </tr>
             </thead>
             <tbody>
-              {sortedData.map((entry, index) => (
+             {sortedFilteredData.map((entry, index) => (
                 <tr
                   key={index}
                   className={`border-b ${

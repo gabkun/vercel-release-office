@@ -3,6 +3,7 @@ import Sidenavbar from '../../Admin Utilities/sidenavbar'
 import AxiosInstance from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { FoodWasteModal } from "../Modals/foodwasteModal";
+import { DateRangeModal } from "../Modals/DateFilter";
 
 export const FoodWaste = () => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
@@ -10,9 +11,17 @@ export const FoodWaste = () => {
     const navigate = useNavigate();
     const [showFoodModal, setShowFoodModal] = useState(false);
     const [employees, setEmployees] = useState([]);
-  
+    const [showDateModal, setShowDateModal] = useState(false);
   const openFoodModal = () => setShowFoodModal(true);
   const closeFoodModal = () => setShowFoodModal(false);
+      const [filteredData, setFilteredData] = useState([]);
+      const [dateRange, setDateRange] = useState([
+      {
+        startDate: new Date(),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ]);
   
     useEffect(() => {
       // Fetching data from the backend
@@ -27,6 +36,20 @@ export const FoodWaste = () => {
             id: item.id,
           }));
           setFoodData(fetchedData); // Set the fetched data into the state
+
+          
+              // Filter to today's entries by default
+        const today = new Date();
+        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+        const endOfToday = new Date(today.setHours(23, 59, 59, 999));
+
+        const todayEntries = fetchedData.filter((entry) => {
+          const entryDate = new Date(entry.date);
+          return entryDate >= startOfToday && entryDate <= endOfToday;
+        });
+
+        setFilteredData(todayEntries);
+
         })
         .catch(error => {
           console.error('Error fetching data: ', error);
@@ -109,6 +132,38 @@ export const FoodWaste = () => {
         });
     };
   
+      // Filter data by selected date range
+      useEffect(() => {
+        const { startDate, endDate } = dateRange[0];
+    
+        const filtered = foodData.filter((entry) => {
+          const entryDate = new Date(entry.date);
+          return entryDate >= startDate && entryDate <= endDate;
+        });
+    
+        setFilteredData(filtered);
+      }, [dateRange]);
+    
+        const sortedFilteredData = [...filteredData].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+    
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+    
+        if (sortConfig.key === "grams") {
+          aValue = Number(aValue);
+          bValue = Number(bValue);
+        }
+    
+        return sortConfig.direction === "asc"
+          ? aValue < bValue
+            ? -1
+            : 1
+          : aValue > bValue
+          ? -1
+          : 1;
+      });
+    
   return (
     <div className="flex h-screen w-full">
       {/* Sidebar */}
@@ -119,13 +174,26 @@ export const FoodWaste = () => {
       {/* Content */}
       <div className="flex-1 p-6 overflow-auto bg-gray-100">
         <h1 className="text-2xl font-bold mb-4">Food Waste Collection</h1>
+                        <button
+  onClick={() => setShowDateModal(true)}
+  className="mb-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+>
+  Filter by Date
+</button>
         <button
   onClick={openFoodModal}
   className="mb-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow"
 >
   + Add Waste Entry
 </button>
-
+              <div className="mb-4">
+      <DateRangeModal
+        isOpen={showDateModal}
+        onClose={() => setShowDateModal(false)}
+        dateRange={dateRange}
+        setDateRange={setDateRange}
+      />
+              </div>
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <table className="min-w-full table-auto text-sm text-left text-gray-700">
             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -146,10 +214,16 @@ export const FoodWaste = () => {
               </tr>
             </thead>
             <tbody>
-              {sortedData.map((entry, index) => (
+             {sortedFilteredData.map((entry, index) => (
                 <tr
                   key={index}
-                  className={`border-b ${entry.status === "Accepted" ? "bg-green-50" : entry.status === "Declined" ? "bg-red-50" : "bg-yellow-50"}`}
+                  className={`border-b ${
+                    entry.status === "Accepted"
+                      ? "bg-green-50"
+                      : entry.status === "Declined"
+                      ? "bg-red-50"
+                      : "bg-yellow-50"
+                  }`}
                 >
                   <td className="px-6 py-4">{entry.firstname}</td>
                   <td className="px-6 py-4">{entry.grams}kg</td>
