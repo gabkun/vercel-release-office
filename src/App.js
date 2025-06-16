@@ -19,6 +19,7 @@ import { ExportProducts } from "./Admin/Pages/ExportProducts";
 import { Misc } from "./Admin/Pages/Misc";
 import { Pellets } from "./Admin/Pages/Pellets";
 import { Fertilizer } from "./Admin/Pages/Fertilizer";
+import { WasteHouse } from "./Admin/Pages/InHouseWaste";
 
 function App() {
   useEffect(() => {
@@ -42,6 +43,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Login />} />
         <Route path="/overall" element={<PrivateRoute><OverallPage /></PrivateRoute>} />
+        <Route path="/inhouse" element={<PrivateRoute><WasteHouse /></PrivateRoute>} />
         <Route path="/prod" element={<PrivateRoute><ProductInput /></PrivateRoute>} />
         <Route path="/Analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
         <Route path="/Eggs" element={<PrivateRoute><Eggs /></PrivateRoute>} />

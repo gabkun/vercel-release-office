@@ -8,6 +8,8 @@ import {FaBottleWater, FaBoxTissue } from "react-icons/fa6";
 import { GiMilkCarton , GiSaucepan, GiFruitBowl   } from "react-icons/gi";
 import { BsFillBoxSeamFill } from "react-icons/bs";
 import { TbBottle } from "react-icons/tb"; // For Soy Sauce / Ketchup
+import { TbCalendar } from "react-icons/tb"; // For Soy Sauce / Ketchup
+import { TbGps } from "react-icons/tb"; // For Soy Sauce / Ketchup
 
 export const MobileApp = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -103,10 +105,16 @@ export const MobileApp = () => {
               Contact: {encode.compnum}
             </div>
 
-            <div className="text-sm mb-1">
-              Tracking ID: <span className="font-medium">{encode.tracking_id}</span>
-            </div>
 
+            <div className="text-sm mb-1 flex items-center gap-2">
+              <TbGps className="text-purple-600" />
+              Tracking ID: {encode.tracking_id}
+            </div>
+          
+              <div className="text-sm mb-1 flex items-center gap-2 font-bold">
+              <TbCalendar className="text-purple-600 " />
+              Date: {encode.date}
+            </div>
             <button
   onClick={() => openModal(encode.items, encode.encode_id)} // passing encode.id here
   className="mt-3 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"

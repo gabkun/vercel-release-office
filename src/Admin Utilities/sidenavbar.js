@@ -11,8 +11,9 @@ import {
   Beef,
   Package,
   Notebook,
-  Wheat,        // for Pellets
-  Flower2       // for Fertilizer
+  Wheat,     
+  Flower2,
+  Trash     
 } from "lucide-react";
 
 import BioFlytLogo from "../assets/bioflyt logo full 1.svg";
@@ -32,7 +33,9 @@ const Sidenavbar = () => {
     { label: "Pellets Input", icon: <Wheat className="w-5 h-5" />, path: "/pellets" },
     { label: "Fertilizer Input", icon: <Flower2 className="w-5 h-5" />, path: "/fertilizer" },
     { label: "Exports", icon: <Package className="w-5 h-5" />, path: "/exportprods" },
+    { label: "In-House Waste", icon: <Trash className="w-5 h-5" />, path: "/inhouse" },
     { label: "Remarks", icon: <Notebook className="w-5 h-5" />, path: "/misc" },
+
   ];
 
 
