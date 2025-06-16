@@ -7,7 +7,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.15.14",
-    "@mui/lab": "^5.0.0-alpha.144",
+    "@mui/lab": "5.0.0-alpha.144",
     "@mui/material": "^5.15.14",
     "@mui/styled-engine-sc": "^6.4.6",
     "@mui/x-date-pickers": "^7.27.3",
