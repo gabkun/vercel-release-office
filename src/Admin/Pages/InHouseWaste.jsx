@@ -2,7 +2,7 @@ import React, {useEffect, useState } from 'react'
 import Sidenavbar from '../../Admin Utilities/sidenavbar'
 import AxiosInstance from "../../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { FoodWasteModal } from "../Modals/foodwasteModal";
+import { InHouseModal } from '../Modals/inhouseModal';
 import { DateRangeModal } from "../Modals/DateFilter";
 
 export const WasteHouse = () => {
@@ -254,7 +254,7 @@ export const WasteHouse = () => {
                 </div>
               </div>
               
-        <FoodWasteModal
+        <InHouseModal
           isOpen={showFoodModal}
           onClose={closeFoodModal}
           onSubmitSuccess={refreshData}
