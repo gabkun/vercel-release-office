@@ -91,7 +91,7 @@ export const ProductInput = () => {
                 onClick={() => handleSort("firstname")}
                 className="px-6 py-3 cursor-pointer hover:underline"
               >
-                Employee{" "}
+                Customer{" "}
                 {sortConfig.key === "firstname" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
               </th>
               <th
@@ -136,7 +136,7 @@ export const ProductInput = () => {
                     : "bg-yellow-50"
                 }`}
               >
-                <td className="px-6 py-4">{input.firstname}</td>
+                <td className="px-6 py-4">{input.customer_name}</td>
                 <td className="px-6 py-4">{getProductName(input.product_id)}</td>
                 <td className="px-6 py-4">{input.weight}</td>
                 <td className="px-6 py-4">{new Date(input.timestamp).toLocaleString()}</td>

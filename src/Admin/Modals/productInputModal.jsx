@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FaBox, FaUserTag, FaWeightHanging } from 'react-icons/fa';
 import axiosInstance from '../../api/axiosConfig';
+import { useNavigate } from 'react-router-dom';
 
 export const ProductInputModal = ({ isOpen, onClose, onSubmitSuccess }) => {
   const [formData, setFormData] = useState({
     product_id: '',
-    employee_id: '',
+    customer_name: '',
     weight: '',
   });
   const [products, setProducts] = useState([]);
+    const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
-      // Fetch the product list when modal is opened
       axiosInstance.get('/api/products/')
         .then(response => {
           setProducts(response.data);
@@ -42,6 +43,7 @@ export const ProductInputModal = ({ isOpen, onClose, onSubmitSuccess }) => {
 
       if (onSubmitSuccess) onSubmitSuccess();
       onClose();
+      navigate(0);
     } catch (error) {
       console.error('Failed to submit product input:', error);
     }
@@ -87,9 +89,9 @@ export const ProductInputModal = ({ isOpen, onClose, onSubmitSuccess }) => {
             <FaUserTag className="text-gray-500" />
             <input
               type="text"
-              name="employee_id"
-              placeholder="Employee ID"
-              value={formData.employee_id}
+              name="customer_name"
+              placeholder="Customer Name"
+              value={formData.customer_name}
               onChange={handleChange}
               required
               className="w-full outline-none"
