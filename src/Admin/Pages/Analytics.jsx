@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect, useRef } from "react"; 
 import Sidenavbar from "../../Admin Utilities/sidenavbar";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid
@@ -41,6 +41,20 @@ const Analytics = () => {
 
   const [filterType, setFilterType] = useState("daily");
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  // Close sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsSidebarOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // New states for weekly date range (default to current week Mon-Sun)
   const today = new Date();
   const dayOfWeek = today.getDay(); // Sunday=0, Monday=1 ...
@@ -56,7 +70,7 @@ const Analytics = () => {
     const dayMap = {};
     const employeeTotals = {};
 
-    data.forEach(item => {
+    data.forEach((item) => {
       const { day, total_weight, firstname, surname } = item;
       const employeeName = `${firstname} ${surname}`;
       const weight = parseFloat(total_weight);
@@ -69,13 +83,13 @@ const Analytics = () => {
       employeeTotals[employeeName] += weight;
     });
 
-    const sortedEmployees = Object.keys(employeeTotals).sort(
-      (a, b) => employeeTotals[b] - employeeTotals[a]
-    ).slice(0, 3);
+    const sortedEmployees = Object.keys(employeeTotals)
+      .sort((a, b) => employeeTotals[b] - employeeTotals[a])
+      .slice(0, 3);
 
-    return daysOfWeek.map(day => {
+    return daysOfWeek.map((day) => {
       const entry = { name: day };
-      sortedEmployees.forEach(emp => {
+      sortedEmployees.forEach((emp) => {
         entry[emp] = dayMap[day]?.[emp] || 0;
       });
       return entry;
@@ -93,15 +107,15 @@ const Analytics = () => {
           eggsRes,
           fertilizerRes,
           pelletsRes,
-          bestEmployeeRes
+          bestEmployeeRes,
         ] = await Promise.all([
-          axiosInstance.get('/api/foodwaste/today'),
-          axiosInstance.get('/api/larpup/pupae/total'),
-          axiosInstance.get('/api/larpup/larvae/total'),
-          axiosInstance.get('/api/eggs/totaltoday'),
-          axiosInstance.get('/api/fertilizer/today'),
-          axiosInstance.get('/api/pellets/today'),
-          axiosInstance.get('/api/users/best')
+          axiosInstance.get("/api/foodwaste/today"),
+          axiosInstance.get("/api/larpup/pupae/total"),
+          axiosInstance.get("/api/larpup/larvae/total"),
+          axiosInstance.get("/api/eggs/totaltoday"),
+          axiosInstance.get("/api/fertilizer/today"),
+          axiosInstance.get("/api/pellets/today"),
+          axiosInstance.get("/api/users/best"),
         ]);
 
         setSummaryData({
@@ -114,7 +128,11 @@ const Analytics = () => {
         });
 
         const best = bestEmployeeRes.data?.data;
-        setBestEmployee(best && best.firstname && best.surname ? `${best.firstname} ${best.surname}` : "No approved inputs yet");
+        setBestEmployee(
+          best && best.firstname && best.surname
+            ? `${best.firstname} ${best.surname}`
+            : "No approved inputs yet"
+        );
       } catch (error) {
         console.error("Error fetching summary data:", error);
         setBestEmployee("Error loading");
@@ -142,32 +160,35 @@ const Analytics = () => {
         foodwaste: "/api/foodwaste/getPerWeek",
         fertilizer: "/api/fertilizer/getPerWeek",
         pellets: "/api/pellets/perweek",
-      }
+      },
     };
 
     const endpoints = endpointMap[filterType];
 
     // Build params for weekly API calls
-    const params = filterType === "weekly" ? { start_date: startDate, end_date: endDate } : {};
-const fetchAndSet = async (key, setState) => {
-  try {
-    let res;
-    if (filterType === "weekly") {
-      // POST request with body containing dates
-      res = await axiosInstance.post(endpoints[key], {
-        start_date: startDate,
-        end_date: endDate,
-      });
-    } else {
-      // GET request without body for daily
-      res = await axiosInstance.get(endpoints[key]);
-    }
-    const formatted = transformData(res.data);
-    setState(formatted);
-  } catch (err) {
-    console.error(`Error fetching ${key} data:`, err);
-  }
-};
+    const params =
+      filterType === "weekly"
+        ? { start_date: startDate, end_date: endDate }
+        : {};
+    const fetchAndSet = async (key, setState) => {
+      try {
+        let res;
+        if (filterType === "weekly") {
+          // POST request with body containing dates
+          res = await axiosInstance.post(endpoints[key], {
+            start_date: startDate,
+            end_date: endDate,
+          });
+        } else {
+          // GET request without body for daily
+          res = await axiosInstance.get(endpoints[key]);
+        }
+        const formatted = transformData(res.data);
+        setState(formatted);
+      } catch (err) {
+        console.error(`Error fetching ${key} data:`, err);
+      }
+    };
 
     fetchAndSet("eggs", setEggData);
     fetchAndSet("pupae", setPupaeStandingData);
@@ -191,225 +212,276 @@ const fetchAndSet = async (key, setState) => {
   const getEmployeeKeys = (data) => {
     if (!data.length) return [];
     const sample = data[0];
-    return Object.keys(sample).filter(key => key !== 'name');
+    return Object.keys(sample).filter((key) => key !== "name");
   };
 
   return (
-    <div className="flex h-screen w-full">
-      {/* Sidebar */}
-      <div className="w-64 min-w-[16rem] border-r border-gray-200 bg-white">
-        <Sidenavbar />
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 p-6 overflow-auto">
-        <h1 className="text-2xl font-bold mb-6">Analytics Dashboard</h1>
-
-        {/* Filter Selector */}
-        <div className="mb-4 flex items-center gap-4">
-          <label className="mr-2 font-medium">Filter by:</label>
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="border px-2 py-1 rounded"
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
-
-          {/* Show date pickers only if weekly */}
-          {filterType === "weekly" && (
-            <>
-              <label className="ml-4 font-medium">Start Date (Monday):</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={handleStartDateChange}
-                className="border px-2 py-1 rounded"
-              />
-              <label className="ml-4 font-medium">End Date (Sunday):</label>
-              <input
-                type="date"
-                value={endDate}
-                readOnly
-                className="border px-2 py-1 rounded bg-gray-100 cursor-not-allowed"
-              />
-            </>
-          )}
+    <>
+     
+      <div className="flex h-screen w-full">
+        <div className="div">
+          <div className="">
+            <Sidenavbar />
+          </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-          {/* ... your summary cards here ... same as before ... */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Outstanding Employee</p>
-            <h2 className="text-xl font-semibold">{bestEmployee}</h2>
+        {/* Content */}
+        <div className="flex-1 p-6 overflow-auto">
+          <h1 className="text-2xl font-bold mb-6">Analytics Dashboard</h1>
+
+          {/* Filter Selector */}
+          <div className="mb-4 flex items-center gap-4">
+            <label className="mr-2 font-medium">Filter by:</label>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="border px-2 py-1 rounded"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+            </select>
+
+            {/* Show date pickers only if weekly */}
+            {filterType === "weekly" && (
+              <>
+                <label className="ml-4 font-medium">Start Date (Monday):</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                  className="border px-2 py-1 rounded"
+                />
+                <label className="ml-4 font-medium">End Date (Sunday):</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  readOnly
+                  className="border px-2 py-1 rounded bg-gray-100 cursor-not-allowed"
+                />
+              </>
+            )}
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Eggs (Today)</p>
-            <h2 className="text-xl font-semibold">
-              {summaryData.eggs === "No Data Today" ? "No Data Today" : `${summaryData.eggs} g`}
-            </h2>
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+            {/* ... your summary cards here ... same as before ... */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Outstanding Employee</p>
+              <h2 className="text-xl font-semibold">{bestEmployee}</h2>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total BSF Eggs (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.eggs === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.eggs} g`}
+              </h2>
+            </div>
+            {/* ... (rest of your summary cards unchanged) ... */}
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total BSF Pupae Input (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.pupae === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.pupae} kg`}
+              </h2>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total BSF Larvae Input (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.larvae === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.larvae} kg`}
+              </h2>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total Food Waste Inputs (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.foodWaste === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.foodWaste} kg`}
+              </h2>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total BSF Pellets Input (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.pellets === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.pellets} kg`}
+              </h2>
+            </div>
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <p className="text-gray-600">Total Fertilizer Input (Today)</p>
+              <h2 className="text-xl font-semibold">
+                {summaryData.fertilizer === "No Data Today"
+                  ? "No Data Today"
+                  : `${summaryData.fertilizer} kg`}
+              </h2>
+            </div>
           </div>
-          {/* ... (rest of your summary cards unchanged) ... */}
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Pupae Input (Today)</p>
-            <h2 className="text-xl font-semibold">
-              {summaryData.pupae === "No Data Today" ? "No Data Today" : `${summaryData.pupae} kg`}
-            </h2>
+
+          {/* Chart Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Eggs Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Eggs</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={eggData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(eggData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Pupae Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Pupae</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={pupaeStandingData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(pupaeStandingData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Larvae Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Larvae</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={larvaeStandingData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(larvaeStandingData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Food Waste Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Food Waste</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={foodwasteStandingData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(foodwasteStandingData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Pellets Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Pellets</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={pelletsStandingData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(pelletsStandingData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Fertilizer Chart */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-4">Fertilizer</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={fertilizerStandingData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  {getEmployeeKeys(fertilizerStandingData).map((key, index) => (
+                    <Bar
+                      key={key}
+                      dataKey={key}
+                      fill={
+                        ["#8884d8", "#82ca9d", "#ff7300", "#ffc658"][index % 4]
+                      }
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Larvae Input (Today)</p>
-            <h2 className="text-xl font-semibold">
-              {summaryData.larvae === "No Data Today" ? "No Data Today" : `${summaryData.larvae} kg`}
-            </h2>
-          </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total Food Waste Inputs (Today)</p>
-            <h2 className="text-xl font-semibold">
-              {summaryData.foodWaste === "No Data Today" ? "No Data Today" : `${summaryData.foodWaste} kg`}
-            </h2>
-          </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total BSF Pellets Input (Today)</p>
-            <h2 className="text-xl font-semibold">
-              {summaryData.pellets === "No Data Today" ? "No Data Today" : `${summaryData.pellets} kg`}
-            </h2>
-          </div>
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <p className="text-gray-600">Total Fertilizer Input (Today)</p>
-            <h2 className="text-xl font-semibold">
-          {summaryData.fertilizer === "No Data Today" ? "No Data Today" : `${summaryData.fertilizer} kg`}
-        </h2>
+        </div>
       </div>
-    </div>
-
-{/* Chart Section */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-  {/* Eggs Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Eggs</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={eggData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-       {getEmployeeKeys(eggData).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-                ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Pupae Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Pupae</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={pupaeStandingData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-          {getEmployeeKeys(pupaeStandingData).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-                ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Larvae Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Larvae</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={larvaeStandingData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        {getEmployeeKeys(larvaeStandingData).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-                ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Food Waste Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Food Waste</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={foodwasteStandingData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        {getEmployeeKeys(foodwasteStandingData).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-                ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Pellets Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Pellets</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={pelletsStandingData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-    {getEmployeeKeys(pelletsStandingData).map((key, index) => (
-        <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* Fertilizer Chart */}
-  <div className="bg-white rounded-xl shadow-md p-4">
-    <h3 className="text-lg font-bold mb-4">Fertilizer</h3>
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={fertilizerStandingData}
-        margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-         {getEmployeeKeys(fertilizerStandingData).map((key, index) => (
-                  <Bar key={key} dataKey={key} fill={['#8884d8', '#82ca9d', '#ff7300', '#ffc658'][index % 4]} />
-                ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-</div>
-
-  </div>
-</div>
-);
+    </>
+  );
 };
 
 export default Analytics;

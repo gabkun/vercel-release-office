@@ -20,6 +20,7 @@ import { Misc } from "./Admin/Pages/Misc";
 import { Pellets } from "./Admin/Pages/Pellets";
 import { Fertilizer } from "./Admin/Pages/Fertilizer";
 import { WasteHouse } from "./Admin/Pages/InHouseWaste";
+import { AddVideoToMobile } from "./Admin/Pages/AddVideoToMobile";
 
 function App() {
   useEffect(() => {
@@ -42,22 +43,127 @@ function App() {
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Login />} />
-        <Route path="/overall" element={<PrivateRoute><OverallPage /></PrivateRoute>} />
-        <Route path="/inhouse" element={<PrivateRoute><WasteHouse /></PrivateRoute>} />
-        <Route path="/prod" element={<PrivateRoute><ProductInput /></PrivateRoute>} />
-        <Route path="/Analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
-        <Route path="/Eggs" element={<PrivateRoute><Eggs /></PrivateRoute>} />
-        <Route path="/EmployeeManagement" element={<PrivateRoute><EmployeeManagement /></PrivateRoute>} />
-        <Route path="/EmployeeMonitoring" element={<PrivateRoute><EmployeeMonitoring /></PrivateRoute>} />
-        <Route path="/Larvae" element={<PrivateRoute><Larvae /></PrivateRoute>} />
-        <Route path="/MobileApp" element={<PrivateRoute><MobileApp /></PrivateRoute>} />
-        <Route path="/foodwaste" element={<PrivateRoute><FoodWaste /></PrivateRoute>} />
-        <Route path="/exportprods" element={<PrivateRoute><ExportProducts /></PrivateRoute>} />
-        <Route path="/misc" element={<PrivateRoute><Misc /></PrivateRoute>} />
-        <Route path="/pellets" element={<PrivateRoute><Pellets /></PrivateRoute>} />
-        <Route path="/fertilizer" element={<PrivateRoute><Fertilizer /></PrivateRoute>} />
-         <Route path="/employeehours" element={<EmployeeHours />} />
-       
+        <Route
+          path="/overall"
+          element={
+            <PrivateRoute>
+              <OverallPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/inhouse"
+          element={
+            <PrivateRoute>
+              <WasteHouse />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/prod"
+          element={
+            <PrivateRoute>
+              <ProductInput />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Analytics"
+          element={
+            <PrivateRoute>
+              <Analytics />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Eggs"
+          element={
+            <PrivateRoute>
+              <Eggs />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/EmployeeManagement"
+          element={
+            <PrivateRoute>
+              <EmployeeManagement />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/EmployeeMonitoring"
+          element={
+            <PrivateRoute>
+              <EmployeeMonitoring />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Larvae"
+          element={
+            <PrivateRoute>
+              <Larvae />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/MobileApp"
+          element={
+            <PrivateRoute>
+              <MobileApp />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/foodwaste"
+          element={
+            <PrivateRoute>
+              <FoodWaste />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/exportprods"
+          element={
+            <PrivateRoute>
+              <ExportProducts />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/misc"
+          element={
+            <PrivateRoute>
+              <Misc />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/pellets"
+          element={
+            <PrivateRoute>
+              <Pellets />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/fertilizer"
+          element={
+            <PrivateRoute>
+              <Fertilizer />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/addvideotomobile"
+          element={
+            <PrivateRoute>
+              <AddVideoToMobile />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/employeehours" element={<EmployeeHours />} />
       </Routes>
     </Router>
   );

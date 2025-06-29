@@ -167,101 +167,139 @@ export const Fertilizer = () => {
       
 
   return (
-    <div className="flex h-screen w-full">
-      {/* Sidebar */}
-      <div className="w-64 min-w-[16rem] border-r border-gray-200 bg-white">
-        <Sidenavbar />
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 p-6 overflow-auto bg-gray-100">
-        <h1 className="text-2xl font-bold mb-4">Fertilizer Collection</h1>
-                        <button
-  onClick={() => setShowDateModal(true)}
-  className="mb-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
->
-  Filter by Date
-  </button>
-        <button
-  onClick={openFertilizerModal}
-  className="mb-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow"
->
-  + Add Fertilizer Entry
-</button>
+    <>
+      <div className="flex h-screen w-full">
+        <div className="div">
+          <div className="">
+            <Sidenavbar />
+          </div>
+        </div>
+        {/* Content */}
+        <div className="flex-1 p-6 overflow-auto bg-gray-100">
+          <h1 className="text-2xl font-bold mb-4">Fertilizer Collection</h1>
+          <button
+            onClick={() => setShowDateModal(true)}
+            className="mb-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
+          >
+            Filter by Date
+          </button>
+          <button
+            onClick={openFertilizerModal}
+            className="mb-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow"
+          >
+            + Add Fertilizer Entry
+          </button>
           <div className="mb-4">
-  <DateRangeModal
-    isOpen={showDateModal}
-    onClose={() => setShowDateModal(false)}
-    dateRange={dateRange}
-    setDateRange={setDateRange}
-  />
-        </div>
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full table-auto text-sm text-left text-gray-700">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-              <tr>
-                <th onClick={() => handleSort("firstname")} className="px-6 py-3 cursor-pointer hover:underline">
-                  Employee Name {sortConfig.key === "firstname" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                </th>
-                <th onClick={() => handleSort("grams")} className="px-6 py-3 cursor-pointer hover:underline">
-                  Fertilizer In Kilos {sortConfig.key === "grams" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                </th>
-                <th onClick={() => handleSort("date")} className="px-6 py-3 cursor-pointer hover:underline">
-                  Date Inputted {sortConfig.key === "date" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                </th>
-                <th onClick={() => handleSort("status")} className="px-6 py-3 cursor-pointer hover:underline">
-                  Status {sortConfig.key === "status" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
-                </th>
-                <th className="px-6 py-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedFilteredData.map((entry, index) => (
-                <tr
-                  key={index}
-                  className={`border-b ${
-                    entry.status === "Accepted"
-                      ? "bg-green-50"
-                      : entry.status === "Declined"
-                      ? "bg-red-50"
-                      : "bg-yellow-50"
-                  }`}
-                >
-                  <td className="px-6 py-4">{entry.firstname}</td>
-                  <td className="px-6 py-4">{entry.grams}kg</td>
-                  <td className="px-6 py-4">{entry.date}</td>
-                  <td className="px-6 py-4 font-medium">{entry.status}</td>
-                  <td className="px-6 py-4 space-x-2">
-                    {entry.status === "Pending" ? (
-                      <>
-                        <button onClick={() => handleAccept(entry.id)}
-                          className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200">
-                          Accept
-                        </button>
-                        <button onClick={() => handleDecline(entry.id)}
-                          className="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200">
-                          Decline
-                        </button>
-                      </>
-                    ) : (
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200">
-                        View
-                      </button>
-                    )}
-                  </td>
+            <DateRangeModal
+              isOpen={showDateModal}
+              onClose={() => setShowDateModal(false)}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+            />
+          </div>
+          <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full table-auto text-sm text-left text-gray-700">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                  <th
+                    onClick={() => handleSort("firstname")}
+                    className="px-6 py-3 cursor-pointer hover:underline"
+                  >
+                    Employee Name{" "}
+                    {sortConfig.key === "firstname"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th
+                    onClick={() => handleSort("grams")}
+                    className="px-6 py-3 cursor-pointer hover:underline"
+                  >
+                    Fertilizer In Kilos{" "}
+                    {sortConfig.key === "grams"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th
+                    onClick={() => handleSort("date")}
+                    className="px-6 py-3 cursor-pointer hover:underline"
+                  >
+                    Date Inputted{" "}
+                    {sortConfig.key === "date"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th
+                    onClick={() => handleSort("status")}
+                    className="px-6 py-3 cursor-pointer hover:underline"
+                  >
+                    Status{" "}
+                    {sortConfig.key === "status"
+                      ? sortConfig.direction === "asc"
+                        ? "▲"
+                        : "▼"
+                      : ""}
+                  </th>
+                  <th className="px-6 py-3">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sortedFilteredData.map((entry, index) => (
+                  <tr
+                    key={index}
+                    className={`border-b ${
+                      entry.status === "Accepted"
+                        ? "bg-green-50"
+                        : entry.status === "Declined"
+                        ? "bg-red-50"
+                        : "bg-yellow-50"
+                    }`}
+                  >
+                    <td className="px-6 py-4">{entry.firstname}</td>
+                    <td className="px-6 py-4">{entry.grams}kg</td>
+                    <td className="px-6 py-4">{entry.date}</td>
+                    <td className="px-6 py-4 font-medium">{entry.status}</td>
+                    <td className="px-6 py-4 space-x-2">
+                      {entry.status === "Pending" ? (
+                        <>
+                          <button
+                            onClick={() => handleAccept(entry.id)}
+                            className="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleDecline(entry.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200"
+                          >
+                            Decline
+                          </button>
+                        </>
+                      ) : (
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition duration-200">
+                          View
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <FertilizerModal
+          isOpen={showFertilizerModal}
+          onClose={closeFertilizerModal}
+          onSubmitSuccess={refreshData}
+          employees={employees}
+        />
       </div>
-      
-<FertilizerModal
-  isOpen={showFertilizerModal}
-  onClose={closeFertilizerModal}
-  onSubmitSuccess={refreshData}
-  employees={employees}
-/>
-    </div>
-  )
+    </>
+  );
 }

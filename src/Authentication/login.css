@@ -3,7 +3,7 @@
 }
 
 .login_wrapper {
-    @apply w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[30%] bg-white rounded-xl border-2 p-6;
+    @apply w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[30%] h-[800px] bg-white rounded-xl border-2 p-6;
 }
 
 .title_wrapper {
