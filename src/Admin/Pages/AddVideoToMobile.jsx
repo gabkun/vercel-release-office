@@ -6,6 +6,15 @@ import Sidenavbar from "../../Admin Utilities/sidenavbar";
 export const AddVideoToMobile = () => {
   const navigate = useNavigate();
 
+  /*
+   ****************************************************
+   **  🚫 INDI PAG I-CHANGE MAYO!                    **
+   **  👉 OR ELSE DI KO MA-INCHINDIHAN NA 😤         **
+   **  test all you want lang                         **
+   ****************************************************
+   */
+
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [facebookLink, setFacebookLink] = useState("");
@@ -27,23 +36,29 @@ export const AddVideoToMobile = () => {
     }
   };
 
+  const getDataLinks = async (event) => {
+    // kwa data kung ano gin upload balik di sa FE gab
+    const response = await axiosInstance.get("/api/mo/gab");
+    if (response.data.success) {
+      console.log(response);
+    }
+  };
+
   const handlePost = async (event) => {
     const payload = new FormData();
 
-    payload.append("image",imageFile);
-    payload.append("title",title);
-    payload.append("date",date);
-    payload.append("facebookLink",facebookLink);
-    payload.append("tiktokLink",tiktokLink);
-    payload.append("youtubeLink",youtubeLink);
-
-   
+    payload.append("image", imageFile);
+    payload.append("title", title);
+    payload.append("date", date);
+    payload.append("facebookLink", facebookLink);
+    payload.append("tiktokLink", tiktokLink);
+    payload.append("youtubeLink", youtubeLink);
 
     console.log(payload);
     try {
       const response = await axiosInstance.post("/api/mo/gab", payload, {
         headers: {
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
       });
       // console.log(response)
@@ -149,5 +164,4 @@ export const AddVideoToMobile = () => {
       </div>
     </>
   );
-
 }
