@@ -20,6 +20,7 @@ import { Misc } from "./Admin/Pages/Misc";
 import { Pellets } from "./Admin/Pages/Pellets";
 import { Fertilizer } from "./Admin/Pages/Fertilizer";
 import { WasteHouse } from "./Admin/Pages/InHouseWaste";
+import { AddVideoToMobile } from "./Admin/Pages/AddVideoToMobile.jsx";
 
 function App() {
   useEffect(() => {
