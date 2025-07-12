@@ -58,7 +58,14 @@ function App() {
         <Route path="/pellets" element={<PrivateRoute><Pellets /></PrivateRoute>} />
         <Route path="/fertilizer" element={<PrivateRoute><Fertilizer /></PrivateRoute>} />
          <Route path="/employeehours" element={<EmployeeHours />} />
-       
+               <Route
+          path="/addvideotomobile"
+          element={
+            <PrivateRoute>
+              <AddVideoToMobile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
